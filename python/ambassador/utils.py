@@ -103,6 +103,14 @@ def dump_json(obj: Any, pretty=False) -> str:
 def _load_url_contents(logger: logging.Logger, url: str, stream1: TextIO, stream2: Optional[TextIO]=None) -> bool:
     saved = False
 
+    if url.startswith("file://"):
+        with open(url[7:], 'r') as f:
+            b = f.read()
+            stream1.write(b)
+            if stream2:
+                stream2.write(b)
+        return True
+
     try:
         with requests.get(url) as r:
             if r.status_code == 200:
